@@ -1,6 +1,8 @@
 import cors from "cors"
 import express from "express"
-import DB from "./db.js"
+import knex from "knex"
+import morgan from "morgan"
+import handleError from "./middlewares/handleError.js"
 import makeRoutesUsers from "./routes/makeRoutesUsers.js"
 
 const run = async (config) => {
@@ -8,12 +10,17 @@ const run = async (config) => {
 
   app.use(cors())
   app.use(express.json())
+  app.use(morgan("dev"))
 
-  const db = new DB(config.db)
-
-  await db.connect()
+  const db = knex(config.db)
 
   makeRoutesUsers({ app, db })
+
+  app.use(handleError)
+  // handling 404: keep it always LAST!
+  app.use((req, res) => {
+    res.status(404).send({ error: [`cannot POST ${req.url}`] })
+  })
 
   // eslint-disable-next-line no-console
   app.listen(config.port, () => console.log(`Listening on :${config.port}`))

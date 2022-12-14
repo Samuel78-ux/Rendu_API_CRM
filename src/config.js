@@ -1,9 +1,17 @@
-import { resolve } from "path"
+import { resolve } from "node:path"
 
 const config = {
   port: 3001,
   db: {
-    path: resolve(".db"),
+    client: "pg",
+    connection: {
+      user: "avetisk",
+      database: "user_management",
+    },
+    migrations: {
+      directory: resolve("./src/db/migrations"),
+      stub: resolve("./src/db/migration.stub"),
+    },
   },
 }
 
