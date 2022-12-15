@@ -6,12 +6,12 @@ const handleError = (err, req, res, next) => {
     // eslint-disable-next-line no-console
     console.error(err)
 
-    res.send({ error: ["Oops. Something went wrong."] })
+    res.send({ error: ["Oops. Something went wrong."], errorCode: "error" })
 
     return
   }
 
-  res.status(err.httpCode).send({ error: err.errors })
+  res.status(err.httpCode).send({ error: err.errors, errorCode: err.errorCode })
 }
 
 export default handleError

@@ -1,12 +1,7 @@
 import { NotFoundError } from "../errors.js"
 import mw from "../middlewares/mw.js"
 import validate from "../middlewares/validate.js"
-import {
-  birthDateValidator,
-  emailValidator,
-  idValdiator,
-  nameValidator,
-} from "../validators.js"
+import { emailValidator, idValdiator, nameValidator } from "../validators.js"
 
 const makeRoutesUsers = ({ app, db }) => {
   const checkIfUserExists = async (userId) => {
@@ -16,34 +11,9 @@ const makeRoutesUsers = ({ app, db }) => {
       return user
     }
 
-    throw new NotFoundError("users", userId)
+    throw new NotFoundError()
   }
 
-  app.post(
-    "/users",
-    validate({
-      params: { userId: idValdiator.required() },
-      body: {
-        firstName: nameValidator.required(),
-        lastName: nameValidator.required(),
-        email: emailValidator.required(),
-        birthDate: birthDateValidator.required(),
-      },
-    }),
-    mw(async (req, res) => {
-      const { firstName, lastName, email, birthDate } = req.data.body
-      const [user] = await db("users")
-        .insert({
-          firstName,
-          lastName,
-          email,
-          birthDate,
-        })
-        .returning("*")
-
-      res.send({ result: user })
-    })
-  )
   app.get(
     "/users",
     mw(async (req, res) => {
@@ -76,12 +46,11 @@ const makeRoutesUsers = ({ app, db }) => {
         firstName: nameValidator,
         lastName: nameValidator,
         email: emailValidator,
-        birthDate: birthDateValidator,
       },
     }),
     mw(async (req, res) => {
       const {
-        body: { firstName, lastName, email, birthDate },
+        body: { firstName, lastName, email },
         params: { userId },
       } = req.data
       const user = await checkIfUserExists(userId, res)
@@ -95,7 +64,6 @@ const makeRoutesUsers = ({ app, db }) => {
           ...(firstName ? { firstName } : {}),
           ...(lastName ? { lastName } : {}),
           ...(email ? { email } : {}),
-          ...(birthDate ? { birthDate } : {}),
         })
         .where({ id: userId })
         .returning("*")

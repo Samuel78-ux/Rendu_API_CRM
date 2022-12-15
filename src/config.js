@@ -13,6 +13,16 @@ const config = {
       stub: resolve("./src/db/migration.stub"),
     },
   },
+  security: {
+    session: {
+      password: {
+        saltlen: 32,
+        iterations: 123943,
+        keylen: 256,
+        digest: "sha512",
+      },
+    },
+  },
 }
 
 export default config

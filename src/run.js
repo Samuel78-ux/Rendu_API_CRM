@@ -3,6 +3,7 @@ import express from "express"
 import knex from "knex"
 import morgan from "morgan"
 import handleError from "./middlewares/handleError.js"
+import makeRoutesSign from "./routes/makeRoutesSign.js"
 import makeRoutesUsers from "./routes/makeRoutesUsers.js"
 
 const run = async (config) => {
@@ -15,6 +16,7 @@ const run = async (config) => {
   const db = knex(config.db)
 
   makeRoutesUsers({ app, db })
+  makeRoutesSign({ app, db })
 
   app.use(handleError)
   // handling 404: keep it always LAST!
