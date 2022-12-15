@@ -1,4 +1,6 @@
-import { InvalidCredentials } from "../errors.js"
+import jsonwebtoken from "jsonwebtoken"
+import config from "../config.js"
+import { InvalidCredentialsError } from "../errors.js"
 import hashPassword from "../hashPassword.js"
 import mw from "../middlewares/mw.js"
 import validate from "../middlewares/validate.js"
@@ -49,16 +51,29 @@ const makeRoutesSign = ({ app, db }) => {
       const [user] = await db("users").where({ email })
 
       if (!user) {
-        throw new InvalidCredentials()
+        throw new InvalidCredentialsError()
       }
 
       const [passwordHash] = hashPassword(password, user.passwordSalt)
 
       if (user.passwordHash !== passwordHash) {
-        throw new InvalidCredentials()
+        throw new InvalidCredentialsError()
       }
 
-      res.send({ result: "OK" })
+      const jwt = jsonwebtoken.sign(
+        {
+          payload: {
+            user: {
+              id: user.id,
+              fullName: `${user.firstName} ${user.lastName}`,
+            },
+          },
+        },
+        config.security.session.jwt.secret,
+        { expiresIn: config.security.session.jwt.expiresIn }
+      )
+
+      res.send({ result: jwt })
     })
   )
 }

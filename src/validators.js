@@ -11,7 +11,7 @@ export const lastNameValidator = nameValidator.label("Last name")
 
 export const emailValidator = yup.string().email().label("E-mail")
 
-export const idValdiator = yup
+export const idValidator = yup
   .number()
   .integer()
   .min(1)

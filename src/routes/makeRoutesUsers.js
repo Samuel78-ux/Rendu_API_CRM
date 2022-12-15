@@ -1,7 +1,9 @@
-import { NotFoundError } from "../errors.js"
+import { InvalidAccessError, NotFoundError } from "../errors.js"
+import auth from "../middlewares/auth.js"
 import mw from "../middlewares/mw.js"
 import validate from "../middlewares/validate.js"
-import { emailValidator, idValdiator, nameValidator } from "../validators.js"
+import { sanitizeUser } from "../sanitizers.js"
+import { emailValidator, idValidator, nameValidator } from "../validators.js"
 
 const makeRoutesUsers = ({ app, db }) => {
   const checkIfUserExists = async (userId) => {
@@ -16,16 +18,17 @@ const makeRoutesUsers = ({ app, db }) => {
 
   app.get(
     "/users",
+    auth,
     mw(async (req, res) => {
       const users = await db("users")
 
-      res.send({ result: users })
+      res.send({ result: sanitizeUser(users) })
     })
   )
   app.get(
     "/users/:userId",
     validate({
-      params: { userId: idValdiator.required() },
+      params: { userId: idValidator.required() },
     }),
     mw(async (req, res) => {
       const { userId } = req.data.params
@@ -35,13 +38,15 @@ const makeRoutesUsers = ({ app, db }) => {
         return
       }
 
-      res.send({ result: user })
+      res.send({ result: sanitizeUser(user) })
     })
   )
+
   app.patch(
     "/users/:userId",
+    auth,
     validate({
-      params: { userId: idValdiator.required() },
+      params: { userId: idValidator.required() },
       body: {
         firstName: nameValidator,
         lastName: nameValidator,
@@ -50,9 +55,17 @@ const makeRoutesUsers = ({ app, db }) => {
     }),
     mw(async (req, res) => {
       const {
-        body: { firstName, lastName, email },
-        params: { userId },
-      } = req.data
+        data: {
+          body: { firstName, lastName, email },
+          params: { userId },
+        },
+        session: { user: sessionUser },
+      } = req
+
+      if (userId !== sessionUser.id) {
+        throw new InvalidAccessError()
+      }
+
       const user = await checkIfUserExists(userId, res)
 
       if (!user) {
@@ -68,13 +81,13 @@ const makeRoutesUsers = ({ app, db }) => {
         .where({ id: userId })
         .returning("*")
 
-      res.send({ result: updatedUser })
+      res.send({ result: sanitizeUser(updatedUser) })
     })
   )
   app.delete(
     "/users/:userId",
     validate({
-      params: { userId: idValdiator.required() },
+      params: { userId: idValidator.required() },
     }),
     mw(async (req, res) => {
       const { userId } = req.data.params
@@ -86,7 +99,7 @@ const makeRoutesUsers = ({ app, db }) => {
 
       await db("users").delete().where({ id: userId })
 
-      res.send({ result: user })
+      res.send({ result: sanitizeUser(user) })
     })
   )
 }

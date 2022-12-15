@@ -36,12 +36,24 @@ export class NotFoundError extends AppError {
 
 export class InvalidArgumentError extends AppError {
   constructor(errors = ["Invalid arguments"]) {
-    super(errors, 422, "error.app.invalidArgument")
+    super(errors, 422, "error.app.InvalidArgumentError")
   }
 }
 
-export class InvalidCredentials extends AppError {
+export class InvalidCredentialsError extends AppError {
   constructor(errors = ["Invalid credentials"]) {
-    super(errors, 401, "error.app.invalidCredentials")
+    super(errors, 401, "error.app.InvalidCredentialsError")
+  }
+}
+
+export class InvalidSessionError extends AppError {
+  constructor(errors = ["Invalid session"]) {
+    super(errors, 403, "error.app.InvalidSessionError")
+  }
+}
+
+export class InvalidAccessError extends AppError {
+  constructor(errors = ["Not enough permission."]) {
+    super(errors, 403, "error.app.InvalidAccessError")
   }
 }
