@@ -1,13 +1,20 @@
+import UserModel from "../db/models/UserModel.js"
 import { InvalidAccessError, NotFoundError } from "../errors.js"
 import auth from "../middlewares/auth.js"
 import mw from "../middlewares/mw.js"
 import validate from "../middlewares/validate.js"
 import { sanitizeUser } from "../sanitizers.js"
-import { emailValidator, idValidator, nameValidator } from "../validators.js"
+import {
+  emailValidator,
+  idValidator,
+  nameValidator,
+  queryLimitValidator,
+  queryOffsetValidator,
+} from "../validators.js"
 
 const makeRoutesUsers = ({ app, db }) => {
   const checkIfUserExists = async (userId) => {
-    const [user] = await db("users").where({ id: userId })
+    const user = await UserModel.query().findById(userId)
 
     if (user) {
       return user
@@ -19,12 +26,23 @@ const makeRoutesUsers = ({ app, db }) => {
   app.get(
     "/users",
     auth,
+    validate({
+      query: {
+        limit: queryLimitValidator,
+        offset: queryOffsetValidator,
+      },
+    }),
     mw(async (req, res) => {
-      const users = await db("users")
+      const { limit, offset } = req.data.query
+      const users = await UserModel.query()
+        .withGraphFetched("pets")
+        .limit(limit)
+        .offset(offset)
 
       res.send({ result: sanitizeUser(users) })
     })
   )
+
   app.get(
     "/users/:userId",
     validate({
@@ -32,7 +50,9 @@ const makeRoutesUsers = ({ app, db }) => {
     }),
     mw(async (req, res) => {
       const { userId } = req.data.params
-      const user = await checkIfUserExists(userId)
+      const user = await UserModel.query()
+        .findById(userId)
+        .withGraphFetched("pets(sanitize, fatestFirst)")
 
       if (!user) {
         return
@@ -72,14 +92,11 @@ const makeRoutesUsers = ({ app, db }) => {
         return
       }
 
-      const [updatedUser] = await db("users")
-        .update({
-          ...(firstName ? { firstName } : {}),
-          ...(lastName ? { lastName } : {}),
-          ...(email ? { email } : {}),
-        })
-        .where({ id: userId })
-        .returning("*")
+      const updatedUser = await UserModel.query().updateAndFetchById(userId, {
+        ...(firstName ? { firstName } : {}),
+        ...(lastName ? { lastName } : {}),
+        ...(email ? { email } : {}),
+      })
 
       res.send({ result: sanitizeUser(updatedUser) })
     })
@@ -97,7 +114,7 @@ const makeRoutesUsers = ({ app, db }) => {
         return
       }
 
-      await db("users").delete().where({ id: userId })
+      await UserModel.query().deleteById(userId)
 
       res.send({ result: sanitizeUser(user) })
     })

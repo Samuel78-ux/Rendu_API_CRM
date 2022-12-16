@@ -4,6 +4,8 @@
     "dev": "nodemon index.js"
   },
   "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
+    "axios": "^1.2.1",
     "eslint": "^8.29.0",
     "eslint-config-prettier": "^8.5.0",
     "nodemon": "^2.0.20",

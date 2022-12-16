@@ -2,6 +2,7 @@ import cors from "cors"
 import express from "express"
 import knex from "knex"
 import morgan from "morgan"
+import BaseModel from "./db/models/BaseModel.js"
 import handleError from "./middlewares/handleError.js"
 import makeRoutesSign from "./routes/makeRoutesSign.js"
 import makeRoutesUsers from "./routes/makeRoutesUsers.js"
@@ -14,8 +15,9 @@ const run = async (config) => {
   app.use(morgan("dev"))
 
   const db = knex(config.db)
+  BaseModel.knex(db)
 
-  makeRoutesUsers({ app, db })
+  makeRoutesUsers({ app })
   makeRoutesSign({ app, db })
 
   app.use(handleError)

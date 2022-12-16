@@ -7,4 +7,10 @@ const extract = (keys) => {
   return subExtract
 }
 
-export const sanitizeUser = extract(["id", "firstName", "lastName", "email"])
+export const sanitizeUser = extract([
+  "id",
+  "firstName",
+  "lastName",
+  "email",
+  "pets",
+])

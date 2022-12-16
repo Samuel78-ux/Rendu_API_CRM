@@ -1,4 +1,5 @@
 import * as yup from "yup"
+import config from "./config.js"
 
 export const nameValidator = yup
   .string()
@@ -25,3 +26,16 @@ export const passwordValidator = yup
     "Password must be at least 8 chars & contain at least one of each: lower case, upper case, digit, special char."
   )
   .label("Password")
+
+export const queryLimitValidator = yup
+  .number()
+  .integer()
+  .min(config.pagination.limit.min)
+  .default(config.pagination.limit.default)
+  .label("Query Limit")
+
+export const queryOffsetValidator = yup
+  .number()
+  .integer()
+  .min(0)
+  .label("Query Offset")

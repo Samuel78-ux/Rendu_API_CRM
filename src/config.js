@@ -50,6 +50,13 @@ try {
           },
         },
       },
+      pagination: {
+        limit: {
+          min: 1,
+          max: 100,
+          default: 10,
+        },
+      },
     },
     { abortEarly: false }
   )
