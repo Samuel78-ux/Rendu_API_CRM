@@ -85,8 +85,6 @@ const makeRoutesNavigation = ({ app, db }) => {
 
   app.get(
     "/menu",
-    auth,
-    checkPermission("read", "menu"),
     validate({
       query: {
         limit: queryLimitValidator,
@@ -125,6 +123,7 @@ const makeRoutesNavigation = ({ app, db }) => {
   app.patch(
     "/menu/:menuId",
     auth,
+    checkPermission("update", "menu"),
     validate({
       params: { menuId: idValidator.required() },
       body: {

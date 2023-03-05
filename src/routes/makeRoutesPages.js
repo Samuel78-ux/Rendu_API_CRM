@@ -90,7 +90,6 @@ const makeRoutesPages = ({ app, db }) => {
   app.get(
     "/pages",
     auth,
-    checkPermission("read", "page"),
     validate({
       query: {
         limit: queryLimitValidator,
@@ -108,7 +107,6 @@ const makeRoutesPages = ({ app, db }) => {
   app.get(
     "/pages/:pageId",
     auth,
-    checkPermission("read", "page"),
     validate({
       params: { pageId: idValidator.required() },
     }),

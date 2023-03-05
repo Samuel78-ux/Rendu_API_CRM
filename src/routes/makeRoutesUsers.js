@@ -51,9 +51,7 @@ const makeRoutesUsers = ({ app }) => {
     }),
     mw(async (req, res) => {
       const { userId } = req.data.params
-      const user = await UserModel.query()
-        .findById(userId)
-        .withGraphFetched("pets(sanitize, fatestFirst)")
+      const user = await UserModel.query().findById(userId)
 
       if (!user) {
         return
@@ -66,7 +64,6 @@ const makeRoutesUsers = ({ app }) => {
   app.patch(
     "/users/:userId",
     auth,
-
     validate({
       params: { userId: idValidator.required() },
       body: {
