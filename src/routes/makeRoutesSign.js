@@ -19,7 +19,7 @@ const makeRoutesSign = ({ app, db }) => {
   app.post(
     "/sign-up",
     auth,
-    checkPermissions("create", "sign"),
+    checkPermissions("create", "users"),
     validate({
       body: {
         firstName: firstNameValidator.required(),

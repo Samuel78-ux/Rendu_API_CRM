@@ -4,14 +4,15 @@ import hashPassword from "../hashPassword.js"
 
 const db = knex(config.db)
 
-const [passwordHash, passwordSalt] = hashPassword("samuelcamara78")
+const [passwordHash, passwordSalt] = hashPassword("AjaxLeGrand_78")
 await db("users").insert([
   {
-    firstName: "Samuel",
-    lastName: "Camara",
-    email: "samu@gmail.com",
+    firstName: "Sophocle",
+    lastName: "Antigone",
+    email: "Anti@gmail.com",
     roleId: 1,
     passwordHash: passwordHash,
     passwordSalt: passwordSalt,
   },
 ])
+db.destroy()

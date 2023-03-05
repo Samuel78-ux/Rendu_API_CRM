@@ -4,7 +4,7 @@ export function up(knex) {
       name: "admin",
       permissions: {
         pages: { create: true, read: true, update: true, delete: true },
-        sign: { create: true, read: true, update: true, delete: true },
+        signs: { create: true, read: true, update: true, delete: true },
         menu: { create: true, read: true, update: true, delete: true },
       },
     },
@@ -12,7 +12,7 @@ export function up(knex) {
       name: "manager",
       permissions: {
         pages: { create: true, read: true, update: true, delete: true },
-        sign: { create: false, read: false, update: false, delete: false },
+        users: { create: false, read: false, update: false, delete: false },
         menu: { create: true, read: true, update: true, delete: true },
       },
     },
@@ -20,7 +20,7 @@ export function up(knex) {
       name: "editor",
       permissions: {
         pages: { create: false, read: true, update: true, delete: false },
-        sign: { create: false, read: true, update: true, delete: false },
+        users: { create: false, read: true, update: true, delete: false },
         menu: { create: false, read: true, update: true, delete: false },
       },
     },

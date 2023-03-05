@@ -27,7 +27,7 @@ const makeRoutesUsers = ({ app }) => {
   app.get(
     "/users",
     auth,
-    checkPermission("read", "sign"),
+    checkPermission("read", "users"),
     validate({
       query: {
         limit: queryLimitValidator,
@@ -45,7 +45,7 @@ const makeRoutesUsers = ({ app }) => {
   app.get(
     "/users/:userId",
     auth,
-    checkPermission("read", "sign"),
+    checkPermission("read", "users"),
     validate({
       params: { userId: idValidator.required() },
     }),
@@ -104,7 +104,7 @@ const makeRoutesUsers = ({ app }) => {
   app.delete(
     "/users/:userId",
     auth,
-    checkPermission("delete", "sign"),
+    checkPermission("delete", "users"),
     validate({
       params: { userId: idValidator.required() },
     }),
