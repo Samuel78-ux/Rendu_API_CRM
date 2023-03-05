@@ -30,10 +30,12 @@ try {
         connection: {
           user: process.env.DB_CONNECTION_USER,
           database: process.env.DB_CONNECTION_DATABASE,
+          password: process.env.DB_CONNECTION_PASSWORD,
         },
         migrations: {
           directory: resolve("./src/db/migrations"),
           stub: resolve("./src/db/migration.stub"),
+          batch: 1,
         },
       },
       security: {

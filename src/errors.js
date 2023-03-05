@@ -57,3 +57,8 @@ export class InvalidAccessError extends AppError {
     super(errors, 403, "error.app.InvalidAccessError")
   }
 }
+export class ForbiddenError extends AppError {
+  constructor(errors = ["Forbidden"]) {
+    super(errors, 403, "error.app.ForbiddenError")
+  }
+}

@@ -1,17 +1,16 @@
 import BaseModel from "./BaseModel.js"
-import PetModel from "./PetModel.js"
+import RoleModel from "./RoleModel.js"
 
 class UserModel extends BaseModel {
   static tableName = "users"
-
   static get relationMappings() {
     return {
-      pets: {
-        modelClass: PetModel,
+      roles: {
+        modelClass: RoleModel,
         relation: BaseModel.HasManyRelation,
         join: {
-          from: "users.id",
-          to: "pets.userId",
+          from: "roles.id",
+          to: "users.roleId",
         },
       },
     }

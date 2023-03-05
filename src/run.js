@@ -6,10 +6,14 @@ import BaseModel from "./db/models/BaseModel.js"
 import handleError from "./middlewares/handleError.js"
 import makeRoutesSign from "./routes/makeRoutesSign.js"
 import makeRoutesUsers from "./routes/makeRoutesUsers.js"
+import makeRoutesPages from "./routes/makeRoutesPages.js"
+import makeRoutesNavigation from "./routes/makeRoutesNavigation.js"
+import cookieParser from "cookie-parser"
 
 const run = async (config) => {
   const app = express()
 
+  app.use(cookieParser())
   app.use(cors())
   app.use(express.json())
   app.use(morgan("dev"))
@@ -19,6 +23,8 @@ const run = async (config) => {
 
   makeRoutesUsers({ app })
   makeRoutesSign({ app, db })
+  makeRoutesPages({ app, db })
+  makeRoutesNavigation({ app, db })
 
   app.use(handleError)
   // handling 404: keep it always LAST!

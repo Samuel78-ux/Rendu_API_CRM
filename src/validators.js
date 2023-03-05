@@ -6,9 +6,33 @@ export const nameValidator = yup
   .matches(/^[\p{L} -]+$/u, "Name is invalid")
   .label("Name")
 
+export const textValidator = yup.string().label("Name")
+
+export const permValidator = yup
+  .number()
+  .integer()
+  .min(1)
+  .label("Role")
+  .typeError("Invalid Role")
+
+export const categorieValidator = yup
+  .number()
+  .integer()
+  .min(1)
+  .label("ID")
+  .typeError("Invalid ID categorie")
+
 export const firstNameValidator = nameValidator.label("First name")
 
 export const lastNameValidator = nameValidator.label("Last name")
+
+export const titleValidator = textValidator.label("Title")
+
+export const contentValidator = textValidator.label("Content")
+
+export const idCategorieValidator = categorieValidator
+
+export const roleValidator = permValidator.label("Role")
 
 export const emailValidator = yup.string().email().label("E-mail")
 

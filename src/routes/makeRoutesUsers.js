@@ -2,6 +2,7 @@ import UserModel from "../db/models/UserModel.js"
 import { InvalidAccessError, NotFoundError } from "../errors.js"
 import auth from "../middlewares/auth.js"
 import mw from "../middlewares/mw.js"
+import checkPermission from "../middlewares/perms.js"
 import validate from "../middlewares/validate.js"
 import { sanitizeUser } from "../sanitizers.js"
 import {
@@ -12,7 +13,7 @@ import {
   queryOffsetValidator,
 } from "../validators.js"
 
-const makeRoutesUsers = ({ app, db }) => {
+const makeRoutesUsers = ({ app }) => {
   const checkIfUserExists = async (userId) => {
     const user = await UserModel.query().findById(userId)
 
@@ -26,6 +27,7 @@ const makeRoutesUsers = ({ app, db }) => {
   app.get(
     "/users",
     auth,
+    checkPermission("read", "sign"),
     validate({
       query: {
         limit: queryLimitValidator,
@@ -34,10 +36,7 @@ const makeRoutesUsers = ({ app, db }) => {
     }),
     mw(async (req, res) => {
       const { limit, offset } = req.data.query
-      const users = await UserModel.query()
-        .withGraphFetched("pets")
-        .limit(limit)
-        .offset(offset)
+      const users = await UserModel.query().limit(limit).offset(offset)
 
       res.send({ result: sanitizeUser(users) })
     })
@@ -45,6 +44,8 @@ const makeRoutesUsers = ({ app, db }) => {
 
   app.get(
     "/users/:userId",
+    auth,
+    checkPermission("read", "sign"),
     validate({
       params: { userId: idValidator.required() },
     }),
@@ -65,6 +66,7 @@ const makeRoutesUsers = ({ app, db }) => {
   app.patch(
     "/users/:userId",
     auth,
+
     validate({
       params: { userId: idValidator.required() },
       body: {
@@ -101,8 +103,11 @@ const makeRoutesUsers = ({ app, db }) => {
       res.send({ result: sanitizeUser(updatedUser) })
     })
   )
+
   app.delete(
     "/users/:userId",
+    auth,
+    checkPermission("delete", "sign"),
     validate({
       params: { userId: idValidator.required() },
     }),
